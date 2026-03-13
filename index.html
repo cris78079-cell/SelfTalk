@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SELFTALK SPACE - Seminario</title>
+<style>
+  :root{
+    --bg:#cfefff;
+    --nav:#0f172a;
+    --card:rgba(255,255,255,.94);
+    --text:#0b1220;
+    --muted:#475569;
+    --border:rgba(15,23,42,.14);
+    --shadow:0 18px 40px rgba(15,23,42,.12);
+    --radius:18px;
+    --ok:#22c55e;
+    --danger:#ef4444;
+    --btn:#0f172a;
+    --warn:#f59e0b;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: radial-gradient(1200px 600px at 20% 10%, rgba(255,255,255,.55), rgba(255,255,255,0)),
+                radial-gradient(900px 520px at 90% 30%, rgba(255,255,255,.35), rgba(255,255,255,0)),
+                var(--bg);
+    color:var(--text);
+  }
+  .topbar{
+    position:sticky;top:0;z-index:50;
+    background: linear-gradient(90deg, rgba(15,23,42,.98), rgba(15,23,42,.92));
+    color:#fff;
+    padding:14px 16px;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    border-bottom:1px solid rgba(255,255,255,.10);
+    backdrop-filter: blur(10px);
+  }
+  .brand{display:flex;align-items:center;gap:12px;}
+  .logo{
+    width:40px;height:40px;border-radius:14px;
+    background: linear-gradient(145deg, rgba(34,197,94,.95), rgba(59,130,246,.95));
+    display:grid;place-items:center;
+    font-weight:900;
+    box-shadow: 0 10px 22px rgba(0,0,0,.25);
+  }
+  .brand h1{margin:0;font-size:16px;letter-spacing:1.2px}
+  .brand p{margin:4px 0 0;font-size:12px;opacity:.85}
+  .badges{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .badge{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.18);
+    padding:8px 10px;border-radius:999px;font-size:12px;
+    display:flex;gap:8px;align-items:center;white-space:nowrap;
+  }
+  .dot{width:10px;height:10px;border-radius:50%;background:#94a3b8}
+  .dot.rec{background:#ef4444; box-shadow:0 0 0 4px rgba(239,68,68,.18)}
+  .dot.pause{background:#f59e0b; box-shadow:0 0 0 4px rgba(245,158,11,.18)}
+  .dot.ready{background:#22c55e; box-shadow:0 0 0 4px rgba(34,197,94,.18)}
+
+  .wrap{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px;
+    display:grid;
+    grid-template-columns: 1.2fr .8fr;
+    gap: 16px;
+    align-items:start;
+  }
+  @media (max-width: 980px){
+    .wrap{grid-template-columns:1fr;}
+  }
+  .card{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px;
+    min-width:0;
+  }
+  h2{margin:0 0 6px 0;font-size:14px;letter-spacing:.2px}
+  .muted{color:var(--muted);font-size:12px;line-height:1.35}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  .btnRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  button{
+    padding:10px 12px;
+    border-radius:12px;
+    border:none;
+    background: var(--btn);
+    color:#fff;
+    font-weight:800;
+    cursor:pointer;
+  }
+  button:disabled{opacity:.55;cursor:not-allowed}
+  button.ok{background:var(--ok);color:#063}
+  button.warn{background:var(--warn);color:#3a2600}
+  button.danger{background:var(--danger)}
+  button.secondary{background:rgba(15,23,42,.08);color:var(--text);border:1px solid var(--border)}
+  video#preview{
+    width:100%;
+    border-radius:14px;
+    background:#000;
+    margin-top:10px;
+    max-height: 60vh;
+    object-fit: cover;
+  }
+
+  .field{display:flex;flex-direction:column;gap:6px;min-width:220px;flex:1}
+  label{font-size:12px;color:var(--muted);font-weight:800}
+  input{
+    padding:11px 12px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    background: rgba(255,255,255,.75);
+    outline:none;
+    font-size:13px;
+  }
+
+  .progress-card{
+    margin-top: 14px;
+    border: 1px solid var(--border);
+    background:#fff;
+    border-radius: 14px;
+    padding: 12px;
+  }
+  .steps{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:8px}
+  @media (max-width:520px){.steps{grid-template-columns:repeat(4,1fr)}}
+  .step{
+    padding:8px 6px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:#f1f5f9;
+    font-size:12px;
+    text-align:center;
+    font-weight:800;
+    white-space:nowrap;
+  }
+  .step.done{background: rgba(34,197,94,.25);}
+
+  .dayBtn{
+    padding:8px 10px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    background:#f1f5f9;
+    font-weight:900;
+    font-size:12px;
+    cursor:pointer;
+  }
+  .dayBtn.active{background: rgba(59,130,246,.18);}
+  .dayBtn.done{background: rgba(34,197,94,.25);}
+
+  .bar{height:10px;background:#e2e8f0;border-radius:999px;margin-top:8px;overflow:hidden;border:1px solid var(--border)}
+  .bar>div{height:100%;width:0%;background:linear-gradient(90deg,#22c55e,#3b82f6)}
+
+  .rightScroll{max-height:calc(100vh - 190px);overflow:auto;padding-right:6px}
+  details.folder{
+    margin-top:10px;
+    border:1px solid var(--border);
+    border-radius:14px;
+    background:#fff;
+    overflow:hidden;
+  }
+  summary{
+    cursor:pointer;
+    padding:12px;
+    font-weight:900;
+    list-style:none;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+  }
+  summary::-webkit-details-marker{display:none}
+  .badge2{
+    font-size:12px;
+    color:var(--muted);
+    border:1px solid var(--border);
+    padding:4px 8px;
+    border-radius:999px;
+    background: rgba(255,255,255,.75);
+    white-space:nowrap;
+  }
+  .item{padding:10px;border-top: 1px dashed var(--border);}
+  .item video{width:100%;border-radius:12px;background:#000;margin-top:6px;}
+  .item-meta{font-size:12px;color:var(--muted);margin-top:2px}
+  .empty{
+    margin-top:10px;
+    border:1px dashed var(--border);
+    border-radius:14px;
+    padding:12px;
+    background:#fff;
+    color:var(--muted);
+    line-height:1.4;
+  }
+
+  .modalBackdrop{
+    position:fixed;inset:0;
+    background: rgba(0,0,0,.35);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding: 16px;
+    z-index: 9999;
+  }
+  .modal{
+    width:min(900px, 98vw);
+    background:#fff;
+    border-radius: 18px;
+    border:1px solid var(--border);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .modalHead{
+    background: rgba(15,23,42,.96);
+    color:#fff;
+    padding:12px 14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+  }
+  .modalBody{padding: 14px;}
+  .toast{
+    position:fixed;left:50%;bottom:16px;transform:translateX(-50%);
+    background:rgba(255,255,255,.96);
+    border:1px solid var(--border);
+    box-shadow: var(--shadow);
+    padding:10px 12px;border-radius:999px;
+    font-size:13px;display:none;max-width:92vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    z-index: 10000;
+  }
+
+  .cert{
+    border: 10px solid rgba(15,23,42,.10);
+    border-radius: 18px;
+    padding: 22px;
+    background:
+      radial-gradient(900px 520px at 80% 20%, rgba(59,130,246,.08), rgba(59,130,246,0)),
+      radial-gradient(900px 520px at 20% 80%, rgba(34,197,94,.08), rgba(34,197,94,0)),
+      #fff;
+  }
+  .certTop{
+    display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;
+  }
+  .certMark{display:flex;gap:12px;align-items:center;}
+  .certMark .logo{width:56px;height:56px;border-radius:18px;font-size:20px;}
+  .cert h3{margin:0;font-size:18px;letter-spacing:1.2px}
+  .cert p{margin:8px 0;color:#0b1220}
+  .cert .big{font-size:28px;font-weight:1000;margin: 10px 0 6px;}
+  .cert .course{font-size:16px;font-weight:900;margin: 6px 0;}
+  .cert .line{
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(15,23,42,.12);
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width:720px){.cert .line{grid-template-columns:1fr;}}
+  .sig{
+    padding: 12px;
+    border:1px solid rgba(15,23,42,.12);
+    border-radius:14px;
+    background: rgba(255,255,255,.65);
+  }
+  .sig .who{font-weight:900}
+  .sig .role{color:var(--muted);font-size:12px;margin-top:4px}
+  .codeBox{
+    padding: 12px;
+    border:1px solid rgba(15,23,42,.12);
+    border-radius:14px;
+    background: rgba(15,23,42,.04);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 12px;
+    color: #0f172a;
+    word-break: break-all;
+  }
+
+  @media print{
+    body{background:#fff}
+    .topbar, .wrap, .modalHead, .btnRowPrint{display:none !important;}
+    .modalBackdrop{display:block !important; position:static; background:#fff; padding:0;}
+    .modal{box-shadow:none;border:none;border-radius:0;width:100%;}
+    .modalBody{padding:0;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="logo">S</div>
+    <div>
+      <h1>SELFTALK SPACE</h1>
+      <p>7-day course • Minimum 2 minutes per day • Certificate upon completion of 7/7</p>
+    </div>
+  </div>
+  <div class="badges">
+    <div class="badge"><span class="dot ready" id="statusDot"></span><span id="statusText">Ready</span></div>
+    <div class="badge">⏱️ <span id="timer">00:00</span></div>
+    <div class="badge">✅ <span id="pct">0%</span></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="card">
+    <h2>👤 Participant registration</h2>
+    <div class="muted">These details will be used for your certificate. They are stored in this browser.</div>
+    <div class="row">
+      <div class="field">
+        <label>Full Name</label>
+        <input id="studentName" placeholder="e.g., John Doe" />
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input id="studentEmail" placeholder="example@email.com" />
+      </div>
+      <div class="field" style="flex:0;min-width:180px;">
+        <label>&nbsp;</label>
+        <button id="saveProfileBtn" class="ok">Save Details</button>
+      </div>
+    </div>
+
+    <div class="progress-card">
+      <h2 style="margin:0;">📈 7-Day Progress</h2>
+      <div class="muted">To complete a day you must save a video with a minimum duration of <b>2:00</b>. Only one video per day counts.</div>
+      <div class="steps" id="steps"></div>
+      <div class="bar"><div id="barFill"></div></div>
+      <div class="row" style="margin-top:10px;">
+        <button id="resetChallengeBtn" class="danger">↩️ Reset Challenge</button>
+        <button id="certificateBtn" class="ok" disabled>🎓 Generate Certificate</button>
+      </div>
+      <div class="muted" id="challengeHint" style="margin-top:8px;"></div>
+    </div>
+
+    
+    <div class="progress-card" id="topicsCard">
+      <h2 style="margin:0;">🧩 Daily Video Topics</h2>
+      <div class="muted">Use the prompt for the day. Your video should answer the questions below.</div>
+      <div class="row" id="topicDays" style="margin-top:10px;"></div>
+
+      <div style="margin-top:10px;padding:12px;border:1px solid rgba(15,23,42,.12);border-radius:14px;background: rgba(255,255,255,.75);">
+        <div style="font-weight:1000;font-size:14px;" id="topicTitle">Day 1: Introducing Yourself</div>
+        <ul id="topicQuestions" style="margin:8px 0 0 18px; color: var(--text);"></ul>
+      </div>
+    </div>
+
+
+<h2 style="margin-top:14px;">📹 Recording</h2>
+    <div class="muted">Record, pause, resume, and save. The system will validate the duration (minimum 2 minutes).</div>
+    <video id="preview" autoplay muted playsinline></video>
+
+    <div class="btnRow">
+      <button id="recordBtn">Record</button>
+      <button id="pauseBtn" class="warn" disabled>Pause</button>
+      <button id="resumeBtn" class="ok" disabled>Resume</button>
+      <button id="stopBtn" disabled>Stop</button>
+      <button id="saveBtn" class="ok" disabled>Save</button>
+      <button id="switchCamBtn" class="secondary">Switch camera</button>
+    </div>
+    <div class="muted" id="recHint" style="margin-top:10px;"></div>
+  </div>
+
+  <div class="card">
+    <h2>📁 Saved videos by day</h2>
+    <div class="muted">Videos are automatically grouped into “folders” Day 1–7. If a video is out of range, it goes to “OTHERS”.</div>
+    <div class="row" style="margin-top:10px;">
+      <button id="exportFoldersBtn" class="secondary">📦 Export by days</button>
+      <button id="downloadAllBtn" class="secondary">⬇️ Download all</button>
+      <button id="clearDbBtn" class="danger">🧹 Delete videos</button>
+    </div>
+    <div class="rightScroll" id="folders"></div>
+  </div>
+</div>
+
+<div class="modalBackdrop" id="certModal">
+  <div class="modal">
+    <div class="modalHead">
+      <div style="font-weight:900;">Certificate</div>
+      <div class="btnRowPrint" style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="secondary" id="closeCertBtn">Close</button>
+        <button class="ok" id="printCertBtn">Save como PDF</button>
+      </div>
+    </div>
+    <div class="modalBody">
+      <div class="cert" id="certArea">
+        <div class="certTop">
+          <div class="certMark">
+            <div class="logo">S</div>
+            <div>
+              <h3>SELFTALK SPACE</h3>
+              <div class="muted">Certificate de finalización</div>
+            </div>
+          </div>
+          <div class="codeBox" id="certCodeBox"></div>
+        </div>
+
+        <p style="margin-top:16px;">This certifies that:</p>
+        <div class="big" id="certName">—</div>
+        <p>has successfully completed the online seminar:</p>
+        <div class="course">SELFTALK SPACE (7 días)</div>
+
+        <div class="muted" id="certDates"></div>
+
+        <div class="line">
+          <div class="sig">
+            <div class="who">CRISTIAN ADRIAN JATIVA REYES</div>
+            <div class="role">Instructor</div>
+          </div>
+          <div class="sig">
+            <div class="who">Progress details</div>
+            <div class="role" id="certProgress">7/7 días completados • mínimo 2 minutos por día</div>
+          </div>
+        </div>
+
+        <div class="muted" style="margin-top:10px;">
+          Recomendación: guarda este certificado como PDF usando el botón “Save como PDF”.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = (id)=>document.getElementById(id);
+const toastEl = $("toast");
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.style.display = "block";
+  clearTimeout(toastEl._t);
+  toastEl._t = setTimeout(()=>toastEl.style.display="none", 2600);
+}
+function ymd(d){ const x=new Date(d); x.setHours(0,0,0,0); return x; }
+function diffDays(a,b){ return Math.floor((a-b)/(1000*60*60*24)); }
+function fmtTime(sec){
+  sec = Math.max(0, Math.floor(sec));
+  const m = String(Math.floor(sec/60)).padStart(2,"0");
+  const s = String(sec%60).padStart(2,"0");
+  return `${m}:${s}`;
+}
+function setStatus(mode, text){
+  const dot = $("statusDot");
+  const label = $("statusText");
+  label.textContent = text;
+  dot.classList.remove("rec","pause","ready");
+  dot.classList.add(mode==="rec"?"rec":(mode==="pause"?"pause":"ready"));
+}
+
+/* Profile */
+const PROFILE_KEY = "sts_profile_v1";
+function getProfile(){ try{return JSON.parse(localStorage.getItem(PROFILE_KEY)||"{}");}catch(e){return{};} }
+function saveProfile(p){ localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); }
+function loadProfileToUI(){
+  const p=getProfile();
+  $("studentName").value=p.name||"";
+  $("studentEmail").value=p.email||"";
+}
+$("saveProfileBtn").onclick = ()=>{
+  const name=$("studentName").value.trim();
+  const email=$("studentEmail").value.trim();
+  if(!name){ toast("Escribe tu nombre completo."); return; }
+  if(!email || !email.includes("@")){ toast("Escribe un email válido."); return; }
+  saveProfile({name,email});
+  toast("Datos guardados ✅");
+  renderProgress();
+  renderTopics();
+};
+
+/* Challenge */
+const MIN_SECONDS = 120;
+const CH_START = "sts_ch_start_v2";
+const CH_DAYS  = "sts_ch_days_v2";
+const CH_DATES = "sts_ch_dates_v2";
+const CERT_CODE = "sts_cert_code_v1";
+
+
+
+/* Topics (Day 1–7) */
+const TOPICS = [
+  { day: 1, title: "Day 1: Introducing Yourself", questions: [
+    "What's your name?",
+    "Where are you from?",
+    "Describe your family."
+  ]},
+  { day: 2, title: "Day 2: Daily Routine", questions: [
+    "What time do you wake up?",
+    "What do you usually do in the morning/afternoon/evening?",
+    "Do you have a favorite part of your day? Why?"
+  ]},
+  { day: 3, title: "Day 3: Hobbies", questions: [
+    "What hobbies do you have?",
+    "Why do you enjoy them?",
+    "How often do you practice them?"
+  ]},
+  { day: 4, title: "Day 4: City where you live", questions: [
+    "Where do you live?",
+    "Do you like living there?",
+    "Which places are the most visited there?"
+  ]},
+  { day: 5, title: "Day 5: Food", questions: [
+    "What is your favorite food?",
+    "Do you like cooking? Why or why not?",
+    "Do you eat out or at home more often?"
+  ]},
+  { day: 6, title: "Day 6: Technology", questions: [
+    "Do you like using technology? Why or why not?",
+    "What apps or websites do you use every day?",
+    "How does technology help you in school or work?"
+  ]},
+  { day: 7, title: "Day 7: Dreams and future plans", questions: [
+    "What do you want to be in the future?",
+    "What places do you want to visit?",
+    "How will you achieve your goals?"
+  ]}
+];
+
+function suggestedDay(){
+  // Suggest next incomplete day if challenge started; otherwise Day 1.
+  const ch = getChallenge();
+  const idx = ch.days.indexOf(false);
+  return (idx === -1) ? 7 : (idx + 1);
+}
+
+function renderTopics(selectedDay){
+  const day = selectedDay || suggestedDay();
+  const topic = TOPICS.find(t => t.day === day) || TOPICS[0];
+
+  const daysRow = document.getElementById("topicDays");
+  const titleEl = document.getElementById("topicTitle");
+  const qEl = document.getElementById("topicQuestions");
+  if(!daysRow || !titleEl || !qEl) return;
+
+  const ch = getChallenge();
+  daysRow.innerHTML = "";
+  for(let i=1;i<=7;i++){
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "dayBtn" + (i===day ? " active" : "") + (ch.days[i-1] ? " done" : "");
+    b.textContent = "Day " + i;
+    b.onclick = ()=>renderTopics(i);
+    daysRow.appendChild(b);
+  }
+
+  titleEl.textContent = topic.title;
+  qEl.innerHTML = "";
+  topic.questions.forEach(q=>{
+    const li = document.createElement("li");
+    li.textContent = q;
+    qEl.appendChild(li);
+  });
+}
+
+function getChallenge(){
+  let start=localStorage.getItem(CH_START);
+  let days, dates;
+  try{ days=JSON.parse(localStorage.getItem(CH_DAYS)||"[]"); }catch(e){ days=[]; }
+  try{ dates=JSON.parse(localStorage.getItem(CH_DATES)||"[]"); }catch(e){ dates=[]; }
+  if(!Array.isArray(days)||days.length!==7) days=[false,false,false,false,false,false,false];
+  if(!Array.isArray(dates)||dates.length!==7) dates=[null,null,null,null,null,null,null];
+  return {start, days, dates};
+}
+function saveChallenge(ch){
+  if(ch.start) localStorage.setItem(CH_START, ch.start);
+  localStorage.setItem(CH_DAYS, JSON.stringify(ch.days));
+  localStorage.setItem(CH_DATES, JSON.stringify(ch.dates));
+}
+function resetChallenge(){
+  localStorage.removeItem(CH_START);
+  localStorage.removeItem(CH_DAYS);
+  localStorage.removeItem(CH_DATES);
+  toast("Reto reiniciado ✅");
+  renderProgress();
+  renderFolders();
+}
+$("resetChallengeBtn").onclick = ()=>{
+  if(confirm("¿Seguro que quieres reiniciar el reto 7 días? (No borra videos)")){
+    resetChallenge();
+  }
+};
+function ensureCertCode(){
+  let code=localStorage.getItem(CERT_CODE);
+  if(!code){
+    const rnd=(crypto.randomUUID?crypto.randomUUID():String(Date.now())+"-"+Math.random().toString(16).slice(2));
+    code="STS-"+rnd.replaceAll("-","").slice(0,14).toUpperCase();
+    localStorage.setItem(CERT_CODE, code);
+  }
+  return code;
+}
+function dayIndexForTimestamp(ts){
+  const ch=getChallenge();
+  if(!ch.start) return null;
+  const base=ymd(new Date(parseInt(ch.start)));
+  const d=ymd(new Date(ts));
+  const idx=diffDays(d, base)+1;
+  return (idx>=1 && idx<=7) ? idx : null;
+}
+function canCompleteDay(ts, durationSec){
+  if(durationSec < MIN_SECONDS) return {ok:false, reason:`Duración mínima: 2:00. Tu video dura ${fmtTime(durationSec)}.`};
+  let ch=getChallenge();
+  if(!ch.start) return {ok:true, day:1, willStart:true};
+  const idx=dayIndexForTimestamp(ts);
+  if(idx===null) return {ok:false, reason:"Este video está fuera del rango Día 1–7 del reto actual. Reinicia el reto si quieres empezar otro."};
+  if(ch.days[idx-1]) return {ok:false, reason:`El Día ${idx} ya está completado. Solo cuenta 1 video por día.`};
+  return {ok:true, day:idx, willStart:false};
+}
+function completeDay(ts, day){
+  let ch=getChallenge();
+  if(!ch.start){
+    ch.start=String(ymd(new Date(ts)).getTime());
+  }
+  ch.days[day-1]=true;
+  ch.dates[day-1]=ts;
+  saveChallenge(ch);
+  renderProgress();
+}
+function renderProgress(){
+  const ch=getChallenge();
+  const steps=$("steps");
+  const barFill=$("barFill");
+  steps.innerHTML="";
+  const done=ch.days.filter(Boolean).length;
+  const pct=Math.round(done/7*100);
+  $("pct").textContent=pct+"%";
+  barFill.style.width=pct+"%";
+  for(let i=1;i<=7;i++){
+    const el=document.createElement("div");
+    el.className="step"+(ch.days[i-1]?" done":"");
+    el.textContent="Day "+i;
+    steps.appendChild(el);
+  }
+  const hint=$("challengeHint");
+  if(!ch.start){
+    hint.textContent="The challenge starts when you save your first valid video (minimum 2:00).";
+  }else{
+    const base=new Date(parseInt(ch.start));
+    const end=new Date(base); end.setDate(end.getDate()+6);
+    hint.textContent=`Active challenge: ${base.toLocaleDateString()} → ${end.toLocaleDateString()} • Completed: ${done}/7`;
+  }
+  const profile=getProfile();
+  const okProfile=!!(profile.name && profile.email);
+  $("certificateBtn").disabled = !(done===7 && okProfile);
+  renderTopics();
+}
+
+/* IndexedDB videos */
+const DB_NAME="sts_course_db_v1";
+const STORE="videos";
+let db=null;
+function openDB(){
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open(DB_NAME,1);
+    req.onupgradeneeded=(e)=>{
+      e.target.result.createObjectStore(STORE,{keyPath:"id"});
+    };
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+}
+function addVideo(rec){
+  return new Promise((resolve,reject)=>{
+    const r=db.transaction(STORE,"readwrite").objectStore(STORE).add(rec);
+    r.onsuccess=()=>resolve(true);
+    r.onerror=()=>reject(r.error);
+  });
+}
+function getAllVideos(){
+  return new Promise((resolve,reject)=>{
+    const r=db.transaction(STORE,"readonly").objectStore(STORE).getAll();
+    r.onsuccess=()=>resolve(r.result||[]);
+    r.onerror=()=>reject(r.error);
+  });
+}
+function clearVideos(){
+  return new Promise((resolve,reject)=>{
+    const r=db.transaction(STORE,"readwrite").objectStore(STORE).clear();
+    r.onsuccess=()=>resolve(true);
+    r.onerror=()=>reject(r.error);
+  });
+}
+$("clearDbBtn").onclick = async ()=>{
+  if(confirm("¿Borrar TODOS los videos guardados en este navegador?")){
+    await clearVideos();
+    toast("Videos borrados ✅");
+    renderFolders();
+  }
+};
+
+/* Recording */
+const preview=$("preview");
+const recordBtn=$("recordBtn");
+const pauseBtn=$("pauseBtn");
+const resumeBtn=$("resumeBtn");
+const stopBtn=$("stopBtn");
+const saveBtn=$("saveBtn");
+const switchCamBtn=$("switchCamBtn");
+const recHint=$("recHint");
+
+let stream=null, mediaRecorder=null, chunks=[], lastBlob=null;
+let timerInt=null, tStart=0;
+let facing="user";
+
+function startTimer(){
+  stopTimer();
+  tStart=Date.now();
+  timerInt=setInterval(()=>{
+    $("timer").textContent = fmtTime((Date.now()-tStart)/1000);
+  },200);
+}
+function stopTimer(){
+  if(timerInt) clearInterval(timerInt);
+  timerInt=null;
+  $("timer").textContent="00:00";
+}
+function setButtons(state){
+  if(state==="idle"){
+    recordBtn.disabled=false;
+    pauseBtn.disabled=true;
+    resumeBtn.disabled=true;
+    stopBtn.disabled=true;
+    saveBtn.disabled=true;
+  }else if(state==="recording"){
+    recordBtn.disabled=true;
+    pauseBtn.disabled=false;
+    resumeBtn.disabled=true;
+    stopBtn.disabled=false;
+    saveBtn.disabled=true;
+  }else if(state==="paused"){
+    recordBtn.disabled=true;
+    pauseBtn.disabled=true;
+    resumeBtn.disabled=false;
+    stopBtn.disabled=false;
+    saveBtn.disabled=true;
+  }else if(state==="stopped"){
+    recordBtn.disabled=false;
+    pauseBtn.disabled=true;
+    resumeBtn.disabled=true;
+    stopBtn.disabled=true;
+    saveBtn.disabled=false;
+  }
+}
+async function startStream(){
+  if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
+  const constraints={video:{facingMode:{ideal:facing}}, audio:true};
+  stream=await navigator.mediaDevices.getUserMedia(constraints);
+  preview.srcObject=stream;
+  setStatus("ready","Ready");
+}
+recordBtn.onclick=()=>{
+  chunks=[]; lastBlob=null; recHint.textContent="";
+  mediaRecorder=new MediaRecorder(stream);
+  mediaRecorder.ondataavailable=(e)=>{ if(e.data && e.data.size>0) chunks.push(e.data); };
+  mediaRecorder.onstart=()=>{ setStatus("rec","Recording"); startTimer(); setButtons("recording"); };
+  mediaRecorder.onpause=()=>{ setStatus("pause","Paused"); setButtons("paused"); };
+  mediaRecorder.onresume=()=>{ setStatus("rec","Recording"); setButtons("recording"); };
+  mediaRecorder.onstop=()=>{
+    lastBlob=new Blob(chunks,{type:"video/webm"});
+    setStatus("ready","Stopped"); stopTimer(); setButtons("stopped");
+    recHint.textContent="Ready to save. The video must be at least 2:00 minutes.";
+  };
+  mediaRecorder.start();
+};
+pauseBtn.onclick=()=>{ if(mediaRecorder && mediaRecorder.state==="recording") mediaRecorder.pause(); };
+resumeBtn.onclick=()=>{ if(mediaRecorder && mediaRecorder.state==="paused") mediaRecorder.resume(); };
+stopBtn.onclick=()=>{ if(mediaRecorder && mediaRecorder.state!=="inactive") mediaRecorder.stop(); };
+switchCamBtn.onclick=async()=>{
+  try{
+    facing=(facing==="user")?"environment":"user";
+    await startStream();
+    toast("Cámara cambiada");
+  }catch(e){
+    console.error(e);
+    toast("No se pudo cambiar (tu dispositivo puede tener 1 sola cámara).");
+  }
+};
+function getVideoDurationSec(blob){
+  return new Promise((resolve)=>{
+    const v=document.createElement("video");
+    v.preload="metadata";
+    const url=URL.createObjectURL(blob);
+    v.src=url;
+    v.onloadedmetadata=()=>{
+      const d=v.duration;
+      URL.revokeObjectURL(url);
+      resolve(Number.isFinite(d)?d:0);
+    };
+    v.onerror=()=>{ URL.revokeObjectURL(url); resolve(0); };
+  });
+}
+saveBtn.onclick=async()=>{
+  if(!lastBlob){ toast("No hay grabación para guardar."); return; }
+  const now=Date.now();
+  const duration=await getVideoDurationSec(lastBlob);
+  const chk=canCompleteDay(now, duration);
+  if(!chk.ok){
+    toast(chk.reason);
+    recHint.textContent=chk.reason;
+    return;
+  }
+  if(chk.willStart){
+    const ch=getChallenge();
+    ch.start=String(ymd(new Date(now)).getTime());
+    saveChallenge(ch);
+  }
+  const id=(crypto.randomUUID?crypto.randomUUID():String(now)+"-"+Math.random().toString(16).slice(2));
+  await addVideo({id, createdAt: now, durationSec: duration, blob: lastBlob});
+  completeDay(now, chk.day);
+  lastBlob=null;
+  setButtons("idle");
+  toast(`Video saved ✅ Día ${chk.day} completado`);
+  renderFolders();
+};
+
+/* Folders */
+function makeFolder(day, items){
+  const det=document.createElement("details");
+  det.className="folder";
+  if(day===1) det.open=true;
+
+  const sum=document.createElement("summary");
+  const left=document.createElement("div");
+  left.textContent=`📁 Day ${day}`;
+  const b=document.createElement("span");
+  b.className="badge2";
+  b.textContent=`${items.length} video(s)`;
+  sum.appendChild(left); sum.appendChild(b);
+  det.appendChild(sum);
+
+  if(items.length===0){
+    const emp=document.createElement("div");
+    emp.className="item";
+    emp.style.color="var(--muted)";
+    emp.textContent="No videos for this day.";
+    det.appendChild(emp);
+    return det;
+  }
+  items.sort((a,b)=>b.createdAt-a.createdAt);
+  for(const it of items){
+    const div=document.createElement("div");
+    div.className="item";
+    const meta=document.createElement("div");
+    meta.className="item-meta";
+    meta.textContent=`📅 ${new Date(it.createdAt).toLocaleString()} • ⏱️ ${fmtTime(it.durationSec)} (min 2:00)`;
+    const vid=document.createElement("video");
+    vid.controls=true;
+    vid.src=URL.createObjectURL(it.blob);
+    div.appendChild(meta);
+    div.appendChild(vid);
+    det.appendChild(div);
+  }
+  return det;
+}
+async function renderFolders(){
+  const all=await getAllVideos();
+  const ch=getChallenge();
+  const container=$("folders");
+  container.innerHTML="";
+
+  if(!ch.start){
+    const info=document.createElement("div");
+    info.className="empty";
+    info.textContent="The challenge has not started yet. It activates when you save the first valid video (minimum 2:00).";
+    container.appendChild(info);
+  }
+
+  const groups={1:[],2:[],3:[],4:[],5:[],6:[],7:[], other:[]};
+  for(const it of all){
+    const idx=dayIndexForTimestamp(it.createdAt);
+    if(idx) groups[idx].push(it);
+    else groups.other.push(it);
+  }
+  for(let i=1;i<=7;i++){
+    container.appendChild(makeFolder(i, groups[i]));
+  }
+  if(groups.other.length){
+    const det=document.createElement("details");
+    det.className="folder";
+    const sum=document.createElement("summary");
+    sum.innerHTML=`<div>📁 OTROS (fuera del reto)</div><span class="badge2">${groups.other.length} video(s)</span>`;
+    det.appendChild(sum);
+    groups.other.sort((a,b)=>b.createdAt-a.createdAt);
+    for(const it of groups.other){
+      const div=document.createElement("div");
+      div.className="item";
+      const meta=document.createElement("div");
+      meta.className="item-meta";
+      meta.textContent=`📅 ${new Date(it.createdAt).toLocaleString()} • ⏱️ ${fmtTime(it.durationSec)}`;
+      const vid=document.createElement("video");
+      vid.controls=true;
+      vid.src=URL.createObjectURL(it.blob);
+      div.appendChild(meta);
+      div.appendChild(vid);
+      det.appendChild(div);
+    }
+    container.appendChild(det);
+  }
+}
+
+/* Certificate */
+const certModal=$("certModal");
+$("closeCertBtn").onclick=()=>certModal.style.display="none";
+$("printCertBtn").onclick=()=>window.print();
+
+$("certificateBtn").onclick=()=>{
+  const profile=getProfile();
+  const ch=getChallenge();
+  const done=ch.days.filter(Boolean).length;
+  if(done!==7){ toast("Aún no completas 7/7."); return; }
+  if(!(profile.name && profile.email)){ toast("Primero guarda tu nombre y email."); return; }
+
+  const code=ensureCertCode();
+  $("certCodeBox").textContent = `Código: ${code} • Email: ${profile.email}`;
+  $("certName").textContent = profile.name;
+
+  const start=new Date(parseInt(ch.start));
+  const end=new Date(start); end.setDate(end.getDate()+6);
+  $("certDates").textContent = `Seminar period: ${start.toLocaleDateString()} → ${end.toLocaleDateString()} • Issued: ${new Date().toLocaleDateString()}`;
+
+  certModal.style.display="flex";
+};
+
+/* Export */
+function downloadBlob(blob, filename){
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+function safeFileName(s){ return (s||"file").toString().replace(/[^a-z0-9_-]+/gi,"_").slice(0,120); }
+
+async function exportToRealFolders(){
+  if(!window.showDirectoryPicker){
+    toast("Tu navegador no soporta exportar a carpetas. Usa 'Descargar todo'.");
+    return;
+  }
+  const vids=await getAllVideos();
+  if(!vids.length){ toast("There are no videos to export."); return; }
+
+  const dirHandle=await window.showDirectoryPicker();
+  const ensureSubdir=async(name)=>await dirHandle.getDirectoryHandle(name,{create:true});
+  const sub={OTROS: await ensureSubdir("OTROS")};
+  for(let i=1;i<=7;i++) sub["DIA_"+i]=await ensureSubdir("DIA_"+i);
+
+  for(const v of vids){
+    const idx=dayIndexForTimestamp(v.createdAt);
+    const folder=idx?("DIA_"+idx):"OTROS";
+    const d=new Date(v.createdAt).toISOString().replaceAll(":","-");
+    const fname=`${d}_dur_${Math.round(v.durationSec)}s.webm`;
+    const fh=await sub[folder].getFileHandle(fname,{create:true});
+    const w=await fh.createWritable();
+    await w.write(v.blob);
+    await w.close();
+  }
+  toast("Exportación a carpetas completada ✅");
+}
+async function downloadAll(){
+  const vids=await getAllVideos();
+  if(!vids.length){ toast("There are no videos."); return; }
+  vids.sort((a,b)=>a.createdAt-b.createdAt);
+  for(const v of vids){
+    const idx=dayIndexForTimestamp(v.createdAt);
+    const folder=idx?("DIA_"+idx):"OTROS";
+    const name=`${folder}_${new Date(v.createdAt).toISOString().replaceAll(":","-")}_dur_${Math.round(v.durationSec)}s.webm`;
+    downloadBlob(v.blob, safeFileName(name));
+    await new Promise(r=>setTimeout(r,400));
+  }
+  toast("Descargas iniciadas.");
+}
+$("exportFoldersBtn").onclick=async()=>{
+  try{ await exportToRealFolders(); }catch(e){ console.error(e); toast("Exportación cancelada o no permitida."); }
+};
+$("downloadAllBtn").onclick=downloadAll;
+
+/* Boot */
+(async function(){
+  loadProfileToUI();
+  ensureCertCode();
+  renderProgress();
+  setButtons("idle");
+  db = await openDB();
+  try{
+    await startStream();
+  }catch(e){
+    console.error(e);
+    toast("No se pudo abrir la cámara. Revisa permisos.");
+  }
+  await renderFolders();
+  setStatus("ready","Ready");
+})();
+</script>
+</body>
+</html>
